@@ -25,21 +25,28 @@ After that you will need to enter the following details into the ~/.homebridge/c
   "platforms":[
          {
              "platform": "am43-blinds",
+             "allowed_devices": []
          }
      ]
  }
 ```
-Now start of restart homebridge and all nearby AM43 blinds motors should appear in HomeKit.
+Now start or restart homebridge and watch the logs. Homebridge will report that any AM43 motors that have been found will not be usable until added to the `allowed_devices` array. The log will also tell you the identifier of the motor to use. After adding the identifer the config should look a little something like this:
+
+```JSON
+     {
+         "platform": "am43-blinds",
+         "allowed_devices": ["02-86-68-35-3c-51"]
+     }
+```
+
+Please note that the identifiers in `allowed_devices` might be different depending on the platform you're on. However the should be the same between system reboots. 
 
 # Known Issues
-- [ ] The motor uses a lot of power because the plugin keeps it connected. Therefor it is advised to use this plugin with motors that are connected to AC, not just the solar panel
 - [ ] The plugin is mostly untested. So far I've only tested it on a MacBook Pro 2019. 
 - [ ] When seting up the motor you have to enter a password, however it doesn't seem to be used in the bluetooth calls I use in this plugin. This might become an issue later.
 
 # Todo
 - [ ] Implement support for the Solar Panels light sensor, mine seems broken so I've ordered a new unit. 
-- [ ] Disconnect the motors after some time to converse power.
-- [ ] Poll the state of the battery and blind for a more updated state in HomeKit when manually controlled.
 
 # Thanks
 
