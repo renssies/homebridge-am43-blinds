@@ -6,20 +6,28 @@ A homebridge plugin to control the AM43 based blind motors in HomeKit, these inc
 
 This Homebridge plugin uses the bluetooth on your computer to search for, and connect to the AM43 blinds.
 
+# Requirements
+
+This plugin requires Node version 10 or newer and Homebridge version 0.4.46 or newer. Homebridge version 1.0 is recommended.
+
+It also requires that the machine that hosts Homebridge has a Bluetooth radio that supports the Bluetooth Low Energy (BLE) protocol. Most machines with Bluetooth 4.0 or newer support this protocol. This includes Macs (that support AirDrop) and Raspberry Pi version 3 or newer. Some systems might also work with a external bluetooth 4.0 USB adapter. For compatibility check the [noble package](https://github.com/abandonware/noble) that is used by this plugin.
+
 # Installation
 
-First make sure you are running Homebridge on a system that has Bluetooth Low Energy protocol support. Most devices with Bluetooth 4.0 or newer support this protocol. This includes most mordern Macs and Raspberry Pi's. To see what systems are supported you can check out the info on the [noble package](https://github.com/abandonware/noble) used by this plugin.
+First make sure to setup the blinds using the blinds engine app, including the upper and lower limit. Kill the app after the setup is finished. Having the app open will make the blinds invisible to this plugin. 
 
-Next make sure to setup the blind using the blinds engine app, including the upper and lower limit. Kill the app after the setup is finished. Having the app open will make the blinds invisible to this plugin. 
+--- 
 
-When running Homebridge on Debian, Ubuntu or Raspberry Pi you will first need to follow the following steps. Step 1 must be completed before you can continue with `npm install`.
+When running Homebridge on Debian, Ubuntu or Raspberry Pi you will first need to follow the following steps. macOS Users can skip these steps.
 
-1. Install bluetooth packages
+1. Install bluetooth packages:
 `sudo apt-get install bluetooth bluez libbluetooth-dev libudev-dev`
-2. Give node/homebridge permission to use bluetooth
+2. Give node/homebridge permission to use bluetooth:
 `sudo setcap cap_net_raw+eip $(eval readlink -f $(which node))`
 
-macOS Users can skip these steps.
+Step 1 must be completed before you can continue with `npm install`.
+
+---
 
 The following command can be used to install the plugin on the Homebridge server:
 
