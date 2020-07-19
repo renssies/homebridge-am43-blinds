@@ -1,4 +1,4 @@
-#### This plugin is considered a work a progress
+#### This plugin is considered a work in progress
 
 # Homebridge AM43 Blinds 
 
