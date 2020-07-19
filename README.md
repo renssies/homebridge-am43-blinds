@@ -2,15 +2,24 @@
 
 # Homebridge AM43 Blinds 
 
-A homebridge plugin to control the AM43 based blind motors in HomeKit, these include the A-OK and Zemismart blinds motors as long as the motor uses Bluetooth and the Blinds Engine app. 
+A homebridge plugin to control the AM43 based blind motors in HomeKit, these include the A-OK, [Zemismart](https://www.zemismart.com/products/diy-motorized-your-tranditional-roll-shade-which-with-bean-or-cord-chain-smart-home-automation-support-app-timer-remote-control), [Upndown](https://upndown.nl) and other blinds motors that use Bluetooth and the Blinds Engine app.
 
 This Homebridge plugin uses the bluetooth on your computer to search for, and connect to the AM43 blinds.
 
 # Installation
 
-First make sure you are running Homebridge on a system that has Bluetooth Low Energy protocol support. Most devices with Bluetooth 4.0 or newer support this protocol. This includes most mordern Macs and Raspberry Pi's. To see what systems are supported you can check out the info on the [noble package](https://github.com/abandonware/noble) used by this plugin. You might also have to install additional system packages when using Linux or Raspberry Pi OS.
+First make sure you are running Homebridge on a system that has Bluetooth Low Energy protocol support. Most devices with Bluetooth 4.0 or newer support this protocol. This includes most mordern Macs and Raspberry Pi's. To see what systems are supported you can check out the info on the [noble package](https://github.com/abandonware/noble) used by this plugin.
 
 Next make sure to setup the blind using the blinds engine app, including the upper and lower limit. Kill the app after the setup is finished. Having the app open will make the blinds invisible to this plugin. 
+
+When running Homebridge on Debian, Ubuntu or Raspberry Pi you will first need to follow the following steps. Step 1 must be completed before you can continue with `npm install`.
+
+1. Install bluetooth packages
+`sudo apt-get install bluetooth bluez libbluetooth-dev libudev-dev`
+2. Give node/homebridge permission to use bluetooth
+`sudo setcap cap_net_raw+eip $(eval readlink -f $(which node))`
+
+macOS Users can skip these steps.
 
 The following command can be used to install the plugin on the Homebridge server:
 
@@ -42,7 +51,7 @@ Now start or restart homebridge and watch the logs. Homebridge will report that 
 Please note that the identifiers in `allowed_devices` might be different depending on the platform you're on. However the should be the same between system reboots. 
 
 # Known Issues
-- [ ] The plugin is mostly untested. So far I've only tested it on a MacBook Pro 2019. 
+- [ ] The plugin is mostly untested. So far I've only tested it on a MacBook Pro 2019 and Raspberry Pi 3 Model B+
 - [ ] When seting up the motor you have to enter a password, however it doesn't seem to be used in the bluetooth calls I use in this plugin. This might become an issue later.
 
 # Todo
