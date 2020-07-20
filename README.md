@@ -60,7 +60,8 @@ Please note that the identifiers in `allowed_devices` might be different dependi
 
 # Known Issues
 - [ ] The plugin is mostly untested. So far I've only tested it on a MacBook Pro 2019 and Raspberry Pi 3 Model B+
-- [ ] When seting up the motor you have to enter a password, however it doesn't seem to be used in the bluetooth calls I use in this plugin. This might become an issue later.
+- [ ] When setting up the motor you have to enter a password, however it doesn't seem to be used in the bluetooth calls I use in this plugin. This might become an issue later.
+- [ ] When running this plugin on Raspberry Pi it seems unable to re-connect to the blind after it was disconnected to preserve power. To work around this you can set `hap_interaction_timeout` in config.json to a value of 0. This will however cause the battery to drain faster.
 
 # Todo
 - [ ] Implement support for the Solar Panels light sensor, mine seems broken so I've ordered a new unit. 
