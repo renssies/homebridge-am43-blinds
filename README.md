@@ -35,6 +35,8 @@ The following command can be used to install the plugin on the Homebridge server
 npm install -g https://github.com/renssies/homebridge-am43-blinds
 ```
 
+If you have issues installing the plugin, add `--unsafe-perm` to the install command mentioned above.
+
 After that you will need to enter the following details into the ~/.homebridge/config.json:
 
 ```JSON
