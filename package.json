@@ -25,6 +25,7 @@
   "license": "NIT",
   "dependencies": {
     "@abandonware/noble": "git+https://github.com/abandonware/noble.git",
+    "debug": "^4.2.0",
     "poll": "^1.0.1"
   },
   "prettier": {
