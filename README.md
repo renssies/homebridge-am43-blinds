@@ -29,12 +29,11 @@ Step 1 must be completed before you can continue with `npm install`.
 
 ---
 
-The following command can be used to install the plugin on the Homebridge server:
+The plugin can be installed using the homebridge-config-ui-x or by using the following command:
 
 ```bash
-npm install -g https://github.com/renssies/homebridge-am43-blinds
+npm install -g homebridge-am43-blinds
 ```
-
 If you have issues installing the plugin, add `--unsafe-perm` to the install command mentioned above.
 
 After that you will need to enter the following details into the ~/.homebridge/config.json:
