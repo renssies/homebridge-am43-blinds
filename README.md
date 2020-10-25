@@ -35,7 +35,7 @@ The following command can be used to install the plugin on the Homebridge server
 npm install -g https://github.com/renssies/homebridge-am43-blinds
 ```
 
-If you have issues installing the plugin, add `--unsafe-perm` to the install command mentioned above.
+If you have issues installing the plugin, use `--unsafe-perm` to the install command mentioned above.
 
 After that you will need to enter the following details into the ~/.homebridge/config.json:
 
@@ -67,9 +67,27 @@ Please note that the identifiers in `allowed_devices` might be different dependi
 
 # Known Issues
 
-- [ ] The plugin is mostly untested. So far I've only tested it on a MacBook Pro 2019 and Raspberry Pi 3 Model B+
+- [ ] The plugin is mostly untested, please see [tested on](#tested-on) for a list of devices.
 - [ ] When setting up the motor you have to enter a password, however it doesn't seem to be used in the bluetooth calls I use in this plugin. This might become an issue later.
-- [ ] When running this plugin on Raspberry Pi it seems unable to re-connect to the blind after it was disconnected to preserve power. To work around this you can set `hap_interaction_timeout` in config.json to a value of 0. This will however cause the battery to drain faster.
+- [ ] When there is a bad connection the plugin might still see the blinds but connect and disconnect and give an unresponsive warning in the Home app. Please move your Pi closer or extend the range with an external bluetooth dongle.
+- [ ] When running this plugin on Raspberry Pi it seems unable to re-connect to the blind after it was disconnected to preserve power. To work around this you can set `hap_interaction_timeout` in config.json to a value of 0. This will however cause the battery to drain faster. Example:
+
+```JSON
+{
+  "platforms":[
+         {
+             "platform": "am43-blinds",
+             "allowed_devices": []
+         },
+         "hap_interaction_timeout": 0
+     ]
+ }
+```
+
+# Tested on
+- MacBook Pro 2019
+- Raspberry Pi 3 Model B+
+- Raspberry Pi 4 model B
 
 # Todo
 
