@@ -1,6 +1,6 @@
 {
   "name": "homebridge-am43-blinds",
-  "version": "0.2.2",
+  "version": "0.3",
   "description": "A homebridge plugin to control AM43 based shade motors in HomeKit. These include the A OK and Zemismart bluetooth based motors. This plugin requires a Homebridge host that supports Bluetooth 4.0",
   "main": "index.js",
   "scripts": {
