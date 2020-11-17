@@ -64,7 +64,9 @@ Please note that the identifiers in `allowed_devices` might be different dependi
 
 Running homebridge with `DEBUG=AM43` should cause motor-level debug logs to be output. 
 
-So to run homebridge in debug mode use the command `DEBUG=AM43 homebridge -D` to log debug messages of the AM43 plugin. Or `DEBUG=* homebridge -D` to log messages of all plugins
+So to run homebridge in debug mode use the command `DEBUG=AM43 homebridge -D` to log debug messages of the AM43 plugin. Or `DEBUG=* homebridge -D` to log messages of all plugins. 
+
+The logs can be found in `~/.homebridge` or any custom folder you've specified. They should also be available in the Homebridge Config UI (if `homebridge-config-ui-x` is installed)
 
 # Known Issues
 
