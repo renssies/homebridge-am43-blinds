@@ -64,6 +64,8 @@ Please note that the identifiers in `allowed_devices` might be different dependi
 
 Running homebridge with `DEBUG=AM43` should cause motor-level debug logs to be output. 
 
+So to run homebridge in debug mode use the command `DEBUG=AM43 homebridge -D` to log debug messages of the AM43 plugin. Or `DEBUG=* homebridge -D` to log messages of all plugins
+
 # Known Issues
 
 - [ ] The plugin hasn't been tested thoroughly but it does seem to work on most platforms that have Bluetooth 4.0.
