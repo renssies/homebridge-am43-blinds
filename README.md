@@ -29,12 +29,11 @@ Step 1 must be completed before you can continue with `npm install`.
 
 ---
 
-The following command can be used to install the plugin on the Homebridge server:
+The plugin can be installed using the homebridge-config-ui-x or by using the following command:
 
 ```bash
-npm install -g https://github.com/renssies/homebridge-am43-blinds
+npm install -g homebridge-am43-blinds
 ```
-
 If you have issues installing the plugin, add `--unsafe-perm` to the install command mentioned above.
 
 After that you will need to enter the following details into the ~/.homebridge/config.json:
@@ -83,7 +82,9 @@ Some devices have a very bad Bluetooth range. Some Raspberry Pi boards reportedl
 
 If moving the homebridge device closer isn't an option you can always use a compatible external Bluetooth dongle. Do make sure the dongle supports Bluetooth version 4.0 or newer. You can combine this with a USB extension cable to get outside the desired range. 
 
-When using an external dongle on Linux (including Raspberry Pi) you will have to switch it manually. See [here](https://github.com/abandonware/noble#multiple-adapters-linux-specific) for more details. You will need to make sure the `NOBLE_HCI_DEVICE_ID` environment variable is set correctly before or when homebridge launches.
+
+
+When using an external dongle on Linux (including Raspberry Pi) you will have to switch it manually. On Raspberry Pi you can follow [these steps](https://github.com/renssies/homebridge-am43-blinds/issues/16#issuecomment-716185901). For other linux platforms see [here](https://github.com/abandonware/noble#multiple-adapters-linux-specific) for more details. You will need to make sure the `NOBLE_HCI_DEVICE_ID` environment variable is set correctly before or when homebridge launches.
 
 ### Some other device is using the blinds motor
 The blinds motor only supports one connection. So before it can be found and used by homebridge you will have to force stop the blind engine app and make sure no other homebridge instance is connecting to the motor. 
