@@ -1,46 +1,47 @@
 {
-    "pluginAlias": "am43-blinds",
-    "pluginType": "platform",
-    "singular": true,
-    "headerDisplay": "A plugin for Bluetooth-based AM43 blind motors",
-    "footerDisplay": "See the [github repo](https://github.com/renssies/homebridge-am43-blinds) for known issues and troubleshooting",
-    "schema": {
-      "type": "object",
-      "properties": {
-        "allowed_devices": {
-          "title": "Allowed Devices",
-          "description": "A list of allowed devices, you can launch the plugin once and check the log the get the identifier of each device. Manually assign a null value to use all devices.",
-          "type": "array",
-          "required": false,
-          "uniqueItems": true,
-          "items": {
-            "title": "Identifier or Mac Address",
-            "type": "string"
-          }
-        },
-        "scanning_timeout": {
-            "title": "Scanning timeout (seconds)",
-            "description": "The amount of time use plugin spends scanning for motors. Motors far away from the device might take longer ot be found.",
-            "type": "integer",
-            "required": false,
-            "default": 8
-        },
-        "hap_interaction_timeout": {
-            "title": "In-activity timeout (seconds)",
-            "description": "The amount of time since the last interaction, after which the motor should be disconnected to save power. Use 0 to never disconnect, which will use more power.",
-            "type": "integer",
-            "required": false,
-            "default": 90
-        },
-        "poll_interval": {
-            "title": "Poll interval (seconds)",
-            "description": "The mimimum amount of time between each request for an update on the position, battery status, light level etc.",
-            "type": "integer",
-            "required": false,
-            "default": 300
+  "pluginAlias": "am43-blinds",
+  "pluginType": "platform",
+  "singular": true,
+  "headerDisplay": "A plugin for Bluetooth-based AM43 blind motors",
+  "footerDisplay": "See the [github repo](https://github.com/renssies/homebridge-am43-blinds) for known issues and troubleshooting",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "allowed_devices": {
+        "title": "Allowed Devices",
+        "description": "A list of allowed devices, you can launch the plugin once and check the log the get the identifier of each device. Manually assign a null value to use all devices.",
+        "type": "array",
+        "required": false,
+        "uniqueItems": true,
+        "items": {
+          "title": "Identifier or Mac Address",
+          "type": "string"
         }
+      },
+      "scanning_timeout": {
+        "title": "Scanning timeout (seconds)",
+        "description": "The amount of time use plugin spends scanning for motors. Motors far away from the device might take longer ot be found.",
+        "type": "integer",
+        "required": false,
+        "default": 8
+      },
+      "hap_interaction_timeout": {
+        "title": "In-activity timeout (seconds)",
+        "description": "The amount of time since the last interaction, after which the motor should be disconnected to save power. Use 0 to never disconnect, which will use more power.",
+        "type": "integer",
+        "required": false,
+        "default": 90
+      },
+      "poll_interval": {
+        "title": "Poll interval (seconds)",
+        "description": "The mimimum amount of time between each request for an update on the position, battery status, light level etc.",
+        "type": "integer",
+        "required": false,
+        "default": 300
       }
-    },
-    "form": null,
-    "display": null
-  }
+    }
+  },
+  "form": null,
+  "display": null,
+  "customUi": true
+}
