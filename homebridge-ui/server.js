@@ -1,59 +1,87 @@
 const { HomebridgePluginUiServer } = require("@homebridge/plugin-ui-utils")
 const noble = require("@abandonware/noble")
 
-// your class MUST extend the HomebridgePluginUiServer
-class UiServer extends HomebridgePluginUiServer {
+class AM43UiServer extends HomebridgePluginUiServer {
   constructor() {
-    // super must be called first
     super()
-
-    // Example: create api endpoint request handlers (example only)
-    this.onRequest("/hello", this.handleHelloRequest.bind(this))
     this.onRequest("/scan_for_devices", (...args) =>
       this.handleScanRequest(...args)
     )
+    this.onRequest("/connect_to_device", (...args) =>
+      this.handleConnectRequest(...args)
+    )
 
-    // this.ready() must be called to let the UI know you are ready to accept api calls
+    this.connectedDevice = null
+
+    this._discoveredDevices = []
+    this._connectedDevice = null
+
+    // noble.reset();
+
     this.ready()
   }
 
-  /**
-   * Example only.
-   * Handle requests made from the UI to the `/hello` endpoint.
-   */
-  async handleHelloRequest(payload) {
-    return { hello: "world" }
+  deviceToObject(device) {
+    const { address, advertisement } = device
+    const { localName, rssi } = advertisement
+    const id = this._discoveredDevices.indexOf(device)
+    return { address, rssi, localName, id }
   }
 
   async handleScanRequest({ scan_time }) {
     return new Promise((resolve, reject) => {
-      const deviceList = []
+      if (this._connectedDevice) {
+        noble.reset()
+      }
 
-      noble.on("discover", (device) => {
-        deviceList.push(device)
-        this.pushEvent("device-discovered", {
-          address: device.address,
-          localName: device.advertisement.localName,
-        })
-      })
+      this._discoveredDevices = []
 
-      noble.on("scanStop", async () => {
-        resolve(
-          deviceList.map(({ address, advertisement: { localName } }) => ({
-            address,
-            localName,
-          }))
-        )
+      let hasEnded = false
+
+      const discoverDevice = (device) => {
+        if (!hasEnded) {
+          this._discoveredDevices.push(device)
+          this.pushEvent("device-discovered", this.deviceToObject(device))
+          noble.once("discover", discoverDevice)
+        }
+      }
+
+      noble.once("discover", discoverDevice)
+
+      noble.once("scanStop", async () => {
+        resolve(this._discoveredDevices.map((dev) => this.deviceToObject(dev)))
       })
       noble.startScanning(["fe50"], false, (error) => {
         if (error) reject(error)
       })
-      setTimeout(() => noble.stopScanning(), scan_time)
+      setTimeout(() => {
+        hasEnded = true
+        noble.stopScanning()
+      }, scan_time)
+    })
+  }
+
+  async handleConnectRequest({ device_id }) {
+    const device = this._discoveredDevices[device_id]
+
+    return new Promise((resolve, reject) => {
+      if (!device) {
+        reject(new Error(`Device ${device_id} not found`))
+        return
+      }
+      device.connect((err) => {
+        console.log(err)
+        if (err) reject(err)
+      })
+      device.once("connect", () => {
+        this._connectedDevice = device
+        this.pushEvent("device-connected", this.deviceToObject(device))
+        resolve(this.deviceToObject(device))
+      })
     })
   }
 }
 
-// start the instance of the class
 ;(() => {
-  return new UiServer()
+  return new AM43UiServer()
 })()
