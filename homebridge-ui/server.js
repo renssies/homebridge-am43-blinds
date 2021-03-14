@@ -2,15 +2,27 @@ const { HomebridgePluginUiServer } = require("@homebridge/plugin-ui-utils")
 const noble = require("@abandonware/noble")
 
 // your class MUST extend the HomebridgePluginUiServer
-class AM43UiServer extends HomebridgePluginUiServer {
+class UiServer extends HomebridgePluginUiServer {
   constructor() {
+    // super must be called first
     super()
 
+    // Example: create api endpoint request handlers (example only)
+    this.onRequest("/hello", this.handleHelloRequest.bind(this))
     this.onRequest("/scan_for_devices", (...args) =>
       this.handleScanRequest(...args)
     )
 
+    // this.ready() must be called to let the UI know you are ready to accept api calls
     this.ready()
+  }
+
+  /**
+   * Example only.
+   * Handle requests made from the UI to the `/hello` endpoint.
+   */
+  async handleHelloRequest(payload) {
+    return { hello: "world" }
   }
 
   async handleScanRequest({ scan_time }) {
@@ -19,6 +31,10 @@ class AM43UiServer extends HomebridgePluginUiServer {
 
       noble.on("discover", (device) => {
         deviceList.push(device)
+        this.pushEvent("device-discovered", {
+          address: device.address,
+          localName: device.advertisement.localName,
+        })
       })
 
       noble.on("scanStop", async () => {
@@ -29,7 +45,6 @@ class AM43UiServer extends HomebridgePluginUiServer {
           }))
         )
       })
-
       noble.startScanning(["fe50"], false, (error) => {
         if (error) reject(error)
       })
@@ -40,5 +55,5 @@ class AM43UiServer extends HomebridgePluginUiServer {
 
 // start the instance of the class
 ;(() => {
-  return new AM43UiServer()
+  return new UiServer()
 })()
