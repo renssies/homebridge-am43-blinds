@@ -6,9 +6,8 @@ const MotorInfo = ({ deviceId }) => {
 
   const [device, setDevice] = useState(null)
   const [newName, setNewName] = useState(null)
+  const [passcode, setPasscode] = useState("8888")
   const { config, updateConfig, saveConfig } = useHomebridgeConfig()
-
-  console.log(config)
 
   const isInAllowedDevices = (device && config) && (config[0].allowed_devices.includes(device.address))
 
@@ -37,6 +36,10 @@ const MotorInfo = ({ deviceId }) => {
     homebridge.request('/rename_device', { device_id: deviceId, new_name: newName })
   }
 
+  const submitPassCode = () => {
+    homebridge.request('/auth_with_passcode', { device_id: deviceId, passcode })
+  }
+
   return <div className="card-body d-flex">
     <div className="mr-3">
       <MotorIcon />
@@ -62,6 +65,15 @@ const MotorInfo = ({ deviceId }) => {
           <input value={device.address} type="text" disabled className="form-control" aria-label="local name" aria-describedby="motor-address" />
         </div>
 
+        <div className="input-group mb-3">
+          <div className="input-group-prepend">
+            <span className="input-group-text" id="passcode-label">Passcode</span>
+          </div>
+          <input value={passcode} pattern="[0-9]{4}" onChange={({ target }) => setPasscode(target.value)} type="text" className="form-control" placeholder="(default 8888)" aria-label="passcode" aria-describedby="passcode-label" />
+          <div className="input-group-append">
+            <button type="button" onClick={submitPassCode} className="btn-outline-secondary">Auth</button>
+          </div>
+        </div>
         {config && <button type="button" className={`btn ${isInAllowedDevices ? "btn-danger" : "btn-secondary"}`} onClick={isInAllowedDevices ? removeFromAllowedDevices : addToAllowedDevices}>{isInAllowedDevices ? "Remove from" : "Add to"} Allowed List (on save)</button>}
       </div>
     }
