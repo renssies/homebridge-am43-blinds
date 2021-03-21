@@ -3,6 +3,14 @@ import ReactDOM from "react-dom"
 import App from "./components/app"
 
 ;(async () => {
+  homebridge.addEventListener("reset-success", () => {
+    homebridge.toast.success("Reset BLE Connections")
+  })
+
+  homebridge.addEventListener("reset-fail", () => {
+    homebridge.toast.warning("Might have reset BLE Connections")
+  })
+
   ReactDOM.render(
     React.createElement(App),
     document.querySelector(".am43-app-container")

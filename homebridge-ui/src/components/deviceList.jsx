@@ -20,6 +20,11 @@ const DeviceList = ({ onSelect }) => {
     )
   }
 
+  const bleReset = () => {
+    setDevices([])
+    homebridge.request('/ble_reset')
+  }
+
   return <div className="card-body">
     <ol className="list-group">{devices.map(({ address, rssi, localName, id }) =>
       <button className="list-group-item list-group-item-action d-flex flex-row" key={address} onClick={() => onSelect(id)}>
@@ -33,6 +38,7 @@ const DeviceList = ({ onSelect }) => {
         {rssi && <span className="badge badge-primary badge-pill ml-auto ">{rssi}dB</span>}
       </button>)}</ol>
     <button type="button" className="btn btn-primary w-100" onClick={scanForDevices}>Scan For Devices</button>
+    <button type="button" className="btn btn-danger w-50" onClick={bleReset}>Reset BLE</button>
   </div>
 }
 
