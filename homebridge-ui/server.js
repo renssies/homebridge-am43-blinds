@@ -40,11 +40,11 @@ class AM43UiServer extends HomebridgePluginUiServer {
   }
 
   async handleScanRequest({ scan_time }) {
-    return new Promise((resolve, reject) => {
-      // if (this._connectedDevice) {
-      //   noble.reset()
-      // }
+    if (this._connectedDevice) {
+      await this._connectedDevice.disconnectAsync()
+    }
 
+    return new Promise((resolve, reject) => {
       this._discoveredDevices = []
       let hasEnded = false
 
@@ -120,7 +120,31 @@ class AM43UiServer extends HomebridgePluginUiServer {
         [DeviceValues.AM43_CHARACTERISTIC_ID],
         (error, _, characteristics) => {
           console.log(error)
+          if (error) {
+            // device.disconnect(() => {
+            reject(error)
+            // })
+            return
+          }
           this._controlCharacteristics[device_id] = characteristics[0]
+
+          const notificationToEvent = {
+            "9a35015a31": "name-change-success",
+            "9a1701a5ce": "auth-error",
+            "9a17015a31": "auth-success",
+          }
+
+          this._controlCharacteristics[device_id].on(
+            "data",
+            (data, isNotification) => {
+              // console.log(data.toString("hex"))
+              const eventName = notificationToEvent[data.toString("hex")]
+              if (eventName) this.pushEvent(eventName)
+            }
+          )
+
+          console.log(this._controlCharacteristics[device_id].off)
+
           resolve(this._controlCharacteristics[device_id])
         }
       )
@@ -133,14 +157,11 @@ class AM43UiServer extends HomebridgePluginUiServer {
 
     const data16Bit = new Uint16Array([parseInt(passcode)])
     const data = new Uint8Array(data16Bit.buffer).reverse()
-    // the Blinds Engine app seems to send this at least twice so we probably should as well
 
     const commandBuffer = buildCommandBuffer(
       DeviceValues.AM43_COMMAND_PASSCODE,
       data
     )
-    console.log(`Sending command: ${commandBuffer.toString("hex")}`)
-    await controlCharacteristic.writeAsync(commandBuffer, true)
     await controlCharacteristic.writeAsync(commandBuffer, true)
 
     return "OK"
@@ -157,7 +178,13 @@ class AM43UiServer extends HomebridgePluginUiServer {
       buildCommandBuffer(DeviceValues.AM43_COMMAND_CHANGE_NAME, data),
       true
     )
-    return {}
+
+    // const {services, characteristics} = this._connectedDevice.discoverAllServicesAndCharacteristicsAsync();
+
+    // console.log(services)
+    // console.log(characteristics)
+    // await this._connectedDevice.updateRssiAsync()
+    return this.deviceToObject(this._connectedDevice)
   }
 
   async handleBLEReset({}) {

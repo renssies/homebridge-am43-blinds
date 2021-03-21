@@ -7,6 +7,7 @@ const MotorInfo = ({ deviceId }) => {
   const [device, setDevice] = useState(null)
   const [newName, setNewName] = useState(null)
   const [passcode, setPasscode] = useState("8888")
+  const [hasAuthed, setHasAuthed] = useState(false)
   const { config, updateConfig, saveConfig } = useHomebridgeConfig()
 
   const isInAllowedDevices = (device && config) && (config[0].allowed_devices.includes(device.address))
@@ -25,14 +26,33 @@ const MotorInfo = ({ deviceId }) => {
       (deviceResult) => {
         homebridge.hideSpinner()
         console.log(deviceResult)
+        setNewName(deviceResult.localName)
         setDevice(deviceResult)
       }
     )
+
+    const setAuthTrue = () =>
+      setHasAuthed(true)
+
+    homebridge.addEventListener("auth-success", setAuthTrue)
+    return function () {
+      homebridge.removeEventListener("auth-success", setAuthTrue)
+    }
   }, [])
 
-  useEffect(() => setNewName(device?.localName || null), [device])
+  useEffect(() => {
+    const nameChangeSuccess = () => {
+      setDevice((d) => ({ ...d, localName: newName }))
+    }
 
-  const submitNewName = () => {
+    homebridge.addEventListener("name-change-success", nameChangeSuccess)
+
+    return function () {
+      homebridge.removeEventListener("name-change-success", nameChangeSuccess)
+    }
+  }, [newName])
+
+  const submitNewName = async () => {
     homebridge.request('/rename_device', { device_id: deviceId, new_name: newName })
   }
 
@@ -50,7 +70,7 @@ const MotorInfo = ({ deviceId }) => {
           <div className="input-group-prepend">
             <span className="input-group-text" id="motor-name">Name</span>
           </div>
-          <input value={newName} onChange={({ target }) => setNewName(target.value)} type="text" className="form-control" placeholder="Motor Name" aria-label="local name" aria-describedby="motor-name" />
+          <input value={newName} disabled={!hasAuthed} onChange={({ target }) => setNewName(target.value)} type="text" className="form-control" placeholder="Motor Name" aria-label="local name" aria-describedby="motor-name" />
           {(device.localName !== newName && newName?.length > 0) &&
             <div className="input-group-append">
               <button type="button" onClick={submitNewName} className="btn-outline-secondary">Update</button>
@@ -64,16 +84,17 @@ const MotorInfo = ({ deviceId }) => {
           </div>
           <input value={device.address} type="text" disabled className="form-control" aria-label="local name" aria-describedby="motor-address" />
         </div>
-
-        <div className="input-group mb-3">
-          <div className="input-group-prepend">
-            <span className="input-group-text" id="passcode-label">Passcode</span>
+        {!hasAuthed &&
+          <div className="input-group mb-3">
+            <div className="input-group-prepend">
+              <span className="input-group-text" id="passcode-label">Passcode</span>
+            </div>
+            <input value={passcode} pattern="[0-9]{4}" onChange={({ target }) => setPasscode(target.value)} type="text" className="form-control" placeholder="(default 8888)" aria-label="passcode" aria-describedby="passcode-label" />
+            <div className="input-group-append">
+              <button type="button" onClick={submitPassCode} className="btn-outline-secondary">Auth</button>
+            </div>
           </div>
-          <input value={passcode} pattern="[0-9]{4}" onChange={({ target }) => setPasscode(target.value)} type="text" className="form-control" placeholder="(default 8888)" aria-label="passcode" aria-describedby="passcode-label" />
-          <div className="input-group-append">
-            <button type="button" onClick={submitPassCode} className="btn-outline-secondary">Auth</button>
-          </div>
-        </div>
+        }
         {config && <button type="button" className={`btn ${isInAllowedDevices ? "btn-danger" : "btn-secondary"}`} onClick={isInAllowedDevices ? removeFromAllowedDevices : addToAllowedDevices}>{isInAllowedDevices ? "Remove from" : "Add to"} Allowed List (on save)</button>}
       </div>
     }
