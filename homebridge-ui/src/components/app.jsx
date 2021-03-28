@@ -1,47 +1,38 @@
 import React, { useState, useEffect } from 'react'
-import MotorIcon from "./motorIcon"
+import DeviceList from "./deviceList"
+import MotorInfo from "./motorInfo"
+import BreadCrumbs from "./breadCrumbs"
 
-const DeviceList = ({ onSelect }) => {
-  const [devices, setDevices] = useState([])
+const App = () => {
+  const [inBlindEngineMode, setInBlindEngineMode] = useState(false)
   useEffect(() => {
-    const addDevice = ({ data: device }) => setDevices([...devices, device])
-    homebridge.addEventListener('device-discovered', addDevice);
-    return () => homebridge.removeEventListener("device-discovered", addDevice)
-  }, [devices])
+    if (inBlindEngineMode) {
+      homebridge.hideSchemaForm();
+    }
+    else {
+      homebridge.showSchemaForm();
+    }
+  }, [inBlindEngineMode])
 
-  const scanForDevices = () => {
-    setDevices([])
-    homebridge.showSpinner()
-    homebridge.request('/scan_for_devices', { scan_time: 10e3 }).then(
-      (scanResults) => {
-        homebridge.hideSpinner()
-        setDevices(scanResults)
-      }
-    )
+  const [selectedDeviceId, setSelectedDeviceId] = useState(null)
+
+  const onExit = () => {
+    setSelectedDeviceId(null)
+    setInBlindEngineMode(false)
   }
 
-  const bleReset = () => {
-    setDevices([])
-    homebridge.request('/ble_reset')
-  }
-
-  return <div className="card-body">
-    <ol className="list-group">{devices.map(({ address, rssi, localName, id }) =>
-      <button className="list-group-item list-group-item-action d-flex flex-row" key={address} onClick={() => onSelect(id)}>
-        <div className="mr-4">
-          <MotorIcon small />
-        </div>
-        <div>
-          <h5>{localName}</h5>
-          <p>{address}</p>
-        </div>
-        {rssi && <span className="badge badge-primary badge-pill ml-auto ">{rssi}dB</span>}
-      </button>)}</ol>
-    <div className="d-flex flex-column align-items-center">
-      <button type="button" className="btn btn-primary w-100" onClick={scanForDevices}>Scan For Devices</button>
-      <button type="button" className="btn btn-danger w-50" onClick={bleReset}>Reset BLE</button>
+  if (inBlindEngineMode) {
+    return <div className="card">
+      <BreadCrumbs selectedDeviceId={selectedDeviceId} onExitBlindsEngineMode={onExit} onReturnToDeviceList={() => setSelectedDeviceId(null)} />
+      {selectedDeviceId !== null ? <MotorInfo deviceId={selectedDeviceId} /> : <DeviceList onSelect={id => { console.log({ id }); setSelectedDeviceId(id); }} />}
     </div>
+  }
+
+  return <div className="d-flex justify-content-center">
+    <button type="button" className="btn btn-primary w-75" onClick={() =>
+      setInBlindEngineMode(true)
+    }>Blind Engine</button>
   </div>
 }
 
-export default DeviceList
+export default App
