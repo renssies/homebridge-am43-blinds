@@ -12,7 +12,7 @@ const DeviceList = ({ onSelect }) => {
   const scanForDevices = () => {
     setDevices([])
     homebridge.showSpinner()
-    homebridge.request('/scan_for_devices', { scan_time: 20e3 }).then(
+    homebridge.request('/scan_for_devices', { scan_time: 10e3 }).then(
       (scanResults) => {
         homebridge.hideSpinner()
         setDevices(scanResults)
@@ -37,8 +37,10 @@ const DeviceList = ({ onSelect }) => {
         </div>
         {rssi && <span className="badge badge-primary badge-pill ml-auto ">{rssi}dB</span>}
       </button>)}</ol>
-    <button type="button" className="btn btn-primary w-100" onClick={scanForDevices}>Scan For Devices</button>
-    <button type="button" className="btn btn-danger w-50" onClick={bleReset}>Reset BLE</button>
+    <div className="d-flex flex-column align-items-center">
+      <button type="button" className="btn btn-primary w-100" onClick={scanForDevices}>Scan For Devices</button>
+      <button type="button" className="btn btn-danger w-50" onClick={bleReset}>Reset BLE</button>
+    </div>
   </div>
 }
 

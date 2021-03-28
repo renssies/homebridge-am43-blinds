@@ -22,6 +22,12 @@ class AM43UiServer extends HomebridgePluginUiServer {
       this.handleAuthWithPasscode(...args)
     )
 
+    this.onRequest("/move_motor", (...args) => this.handleMotorMove(...args))
+
+    this.onRequest("/adjust_limit", (...args) =>
+      this.handleAdjustLimit(...args)
+    )
+
     this.connectedDevice = null
 
     this._discoveredDevices = []
@@ -132,19 +138,22 @@ class AM43UiServer extends HomebridgePluginUiServer {
             "9a35015a31": "name-change-success",
             "9a1701a5ce": "auth-error",
             "9a17015a31": "auth-success",
+            "9a22015a31": "limit-set-success",
+            "9a22015b31": "limit-save-success",
+            "9a22015c31": "limit-cancel-success",
           }
 
-          this._controlCharacteristics[device_id].on(
-            "data",
-            (data, isNotification) => {
-              // console.log(data.toString("hex"))
-              const eventName = notificationToEvent[data.toString("hex")]
-              if (eventName) this.pushEvent(eventName)
-            }
-          )
+          const sendAsPushEvent = (data) => {
+            console.log(data.toString("hex"))
+            const eventName = notificationToEvent[data.toString("hex")]
+            if (eventName) this.pushEvent(eventName)
+          }
 
-          console.log(this._controlCharacteristics[device_id].off)
-
+          this._controlCharacteristics[device_id].on("data", sendAsPushEvent)
+          this._connectedDevice.once("disconnect", () => {
+            if (this._controlCharacteristics[device_id])
+              this._controlCharacteristics[device_id].off(sendAsPushEvent)
+          })
           resolve(this._controlCharacteristics[device_id])
         }
       )
@@ -200,6 +209,48 @@ class AM43UiServer extends HomebridgePluginUiServer {
     this._controlCharacteristics = {}
 
     return "OK"
+  }
+
+  async handleAdjustLimit({ device_id, openOrClose, phase }) {
+    const controlCharacteristic = await this.getControlCharacteristic(device_id)
+    console.log({ device_id, openOrClose, phase })
+    const COMMANDS = {
+      OPENED: {
+        SET: Uint8Array.from([0x00, 0x01, 0x00]),
+        SAVE: Uint8Array.from([0x20, 0x01, 0x00]),
+        CANCEL: Uint8Array.from([0x40, 0x01, 0x00]),
+      },
+      CLOSED: {
+        SET: Uint8Array.from([0x00, 0x02, 0x00]),
+        SAVE: Uint8Array.from([0x20, 0x02, 0x00]),
+        CANCEL: Uint8Array.from([0x40, 0x01, 0x00]),
+      },
+    }
+
+    await controlCharacteristic.writeAsync(
+      buildCommandBuffer(
+        DeviceValues.AM43_COMMAND_SET_LIMIT,
+        COMMANDS[openOrClose][phase]
+      ),
+      true
+    )
+  }
+
+  async handleMotorMove({ device_id, command }) {
+    const controlCharacteristic = await this.getControlCharacteristic(device_id)
+
+    const COMMAND_TO_DATA = {
+      OPEN: DeviceValues.AM43_MOVE_OPEN,
+      CLOSE: DeviceValues.AM43_MOVE_CLOSE,
+      STOP: DeviceValues.AM43_MOVE_STOP,
+    }
+
+    await controlCharacteristic.writeAsync(
+      buildCommandBuffer(DeviceValues.AM43_COMMAND_ID_SET_MOVE, [
+        COMMAND_TO_DATA[command],
+      ]),
+      true
+    )
   }
 }
 

@@ -1,6 +1,12 @@
 import React, { Fragment, useEffect, useState } from "react"
 import { useHomebridgeConfig } from "../hooks/useHomebridgeConfig"
+import SetLimit from "./setLimit"
 import MotorIcon from "./motorIcon"
+
+const LIMIT_MODES = {
+  OPENED: "OPENED",
+  CLOSED: "CLOSED"
+}
 
 const MotorInfo = ({ deviceId }) => {
 
@@ -9,6 +15,8 @@ const MotorInfo = ({ deviceId }) => {
   const [passcode, setPasscode] = useState("8888")
   const [hasAuthed, setHasAuthed] = useState(false)
   const { config, updateConfig, saveConfig } = useHomebridgeConfig()
+
+  const [limitUI, setLimitUI] = useState(null)
 
   const isInAllowedDevices = (device && config) && (config[0].allowed_devices.includes(device.address))
 
@@ -94,6 +102,28 @@ const MotorInfo = ({ deviceId }) => {
               <button type="button" onClick={submitPassCode} className="btn-outline-secondary">Auth</button>
             </div>
           </div>
+        }
+        {hasAuthed &&
+          <Fragment>
+            <div className="card border-light mb-3">
+              <button type="button" onClick={() => setLimitUI((l) => l === null ? LIMIT_MODES.OPENED : null)}
+                className="card-header btn btn-outline-secondary btn-sm m-0">
+                Set Open Limit
+               </button>
+              {limitUI === LIMIT_MODES.OPENED &&
+                <SetLimit openOrClose={limitUI} deviceId={deviceId} onClose={() => setLimitUI(null)} />
+              }
+            </div>
+            <div className="card border-light mb-3">
+              <button type="button" onClick={() => setLimitUI((l) => l === null ? LIMIT_MODES.CLOSED : null)}
+                className="card-header btn btn-outline-secondary btn-sm m-0">
+                Set Close Limit
+               </button>
+              {limitUI === LIMIT_MODES.CLOSED &&
+                <SetLimit openOrClose={limitUI} deviceId={deviceId} onClose={() => setLimitUI(null)} />
+              }
+            </div>
+          </Fragment>
         }
         {config && <button type="button" className={`btn ${isInAllowedDevices ? "btn-danger" : "btn-secondary"}`} onClick={isInAllowedDevices ? removeFromAllowedDevices : addToAllowedDevices}>{isInAllowedDevices ? "Remove from" : "Add to"} Allowed List (on save)</button>}
       </div>

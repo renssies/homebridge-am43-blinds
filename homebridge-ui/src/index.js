@@ -18,6 +18,21 @@ import App from "./components/app"
     homebridge.toast.success("Auth Success")
   })
 
+  homebridge.addEventListener("limit-set-success", () => {
+    homebridge.toast.warning(
+      "Motor can overun until this mode's exited",
+      "Limit Adjustment Mode Entered"
+    )
+  })
+
+  homebridge.addEventListener("limit-cancel-success", () => {
+    homebridge.toast.success("Limit Adjustment Mode Exited")
+  })
+
+  homebridge.addEventListener("limit-save-success", () => {
+    homebridge.toast.success("Limit Saved!")
+  })
+
   ReactDOM.render(
     React.createElement(App),
     document.querySelector(".am43-app-container")
