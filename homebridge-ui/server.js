@@ -87,7 +87,6 @@ class AM43UiServer extends HomebridgePluginUiServer {
         return
       }
       device.connect((err) => {
-        console.log(err)
         if (err) reject(err)
       })
       device.once("connect", () => {
@@ -112,24 +111,16 @@ class AM43UiServer extends HomebridgePluginUiServer {
 
   async getControlCharacteristic(device_id) {
     if (this._controlCharacteristics[device_id]) {
-      console.log("already connected")
       return this._controlCharacteristics[device_id]
     }
-
-    console.log("connecting")
     const device = await this.connectToDevice(device_id)
-    console.log("connected!")
-
     return new Promise((resolve, reject) => {
       device.discoverSomeServicesAndCharacteristics(
         [DeviceValues.AM43_SERVICE_ID],
         [DeviceValues.AM43_CHARACTERISTIC_ID],
         (error, _, characteristics) => {
-          console.log(error)
           if (error) {
-            // device.disconnect(() => {
             reject(error)
-            // })
             return
           }
           this._controlCharacteristics[device_id] = characteristics[0]
@@ -144,7 +135,6 @@ class AM43UiServer extends HomebridgePluginUiServer {
           }
 
           const sendAsPushEvent = (data) => {
-            console.log(data.toString("hex"))
             const eventName = notificationToEvent[data.toString("hex")]
             if (eventName) this.pushEvent(eventName)
           }
@@ -187,12 +177,6 @@ class AM43UiServer extends HomebridgePluginUiServer {
       buildCommandBuffer(DeviceValues.AM43_COMMAND_CHANGE_NAME, data),
       true
     )
-
-    // const {services, characteristics} = this._connectedDevice.discoverAllServicesAndCharacteristicsAsync();
-
-    // console.log(services)
-    // console.log(characteristics)
-    // await this._connectedDevice.updateRssiAsync()
     return this.deviceToObject(this._connectedDevice)
   }
 
@@ -213,7 +197,6 @@ class AM43UiServer extends HomebridgePluginUiServer {
 
   async handleAdjustLimit({ device_id, openOrClose, phase }) {
     const controlCharacteristic = await this.getControlCharacteristic(device_id)
-    console.log({ device_id, openOrClose, phase })
     const COMMANDS = {
       OPENED: {
         SET: Uint8Array.from([0x00, 0x01, 0x00]),
