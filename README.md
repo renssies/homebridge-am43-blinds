@@ -12,6 +12,8 @@ This plugin requires Node version 10 or newer and Homebridge version 0.4.46 or n
 
 It also requires that the machine that hosts Homebridge has a Bluetooth radio that supports the Bluetooth Low Energy (BLE) protocol. Most machines with Bluetooth 4.0 or newer support this protocol. This includes Macs (that support AirDrop) and Raspberry Pi version 3 or newer. Some systems might also work with an external Bluetooth 4.0 USB adapter. For compatibility check the [noble package](https://github.com/abandonware/noble) that is used by this plugin.
 
+Bluetooth adapters with the CSR8510 chipset are supported by most systems, including Raspberry Pi with Raspberry Pi OS.
+
 # Installation
 
 First make sure to set up the blinds using the blinds engine app, including the upper and lower limit. Kill the app after the setup is finished. Having the app open will make the blinds invisible to this plugin.
