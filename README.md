@@ -84,11 +84,11 @@ There are some issues with the plugin, but try the following tips before making 
 ### Move the homebridge device closer to the motor or use an external adapter. 
 Some devices have a very bad Bluetooth range. Some Raspberry Pi boards reportedly only have a range of 3 meters (10 feet). In some houses, the technical rooms or rooms with the incoming connections can also have a type of fireproofing which lowers the range of Bluetooth and wifi even more. 
 
-If moving the homebridge device closer isn't an option you can always use a compatible external Bluetooth dongle. Do make sure the dongle supports Bluetooth version 4.0 or newer. You can combine this with a USB extension cable to get outside the desired range. 
-
-
+If moving the homebridge device closer isn't an option you can always use a compatible external Bluetooth dongle. Do make sure the dongle supports Bluetooth version 4.0 or newer. You can combine this with a USB extension cable to get the desired range. A Bluetooth dongle with the CSR8510 chipset is supported by most Linux distributions, including Raspberry Pi OS. 
 
 When using an external dongle on Linux (including Raspberry Pi) you will have to switch it manually. On Raspberry Pi you can follow [these steps](https://github.com/renssies/homebridge-am43-blinds/issues/16#issuecomment-716185901). For other linux platforms see [here](https://github.com/abandonware/noble#multiple-adapters-linux-specific) for more details. You will need to make sure the `NOBLE_HCI_DEVICE_ID` environment variable is set correctly before or when homebridge launches.
+
+On Raspberry Pi you can disable the built-in bluetooth by placing `dtoverlay=disable-bt` inside `/boot/config.txt` on the root of the Raspberry Pi and rebooting the Raspberry Pi.
 
 ### Some other device is using the blinds motor
 The blinds motor only supports one connection. So before it can be found and used by homebridge you will have to force stop the blind engine app and make sure no other homebridge instance is connecting to the motor. 
