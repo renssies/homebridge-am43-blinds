@@ -4,7 +4,9 @@
   "description": "A homebridge plugin to control AM43 based shade motors in HomeKit. These include the A OK and Zemismart bluetooth based motors. This plugin requires a Homebridge host that supports Bluetooth 4.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "esbuild homebridge-ui/src/index.js --bundle --outfile=homebridge-ui/public/out.js --define:process.env.NODE_ENV='\"development\"'",
+    "prepare": "npm run build"
   },
   "keywords": [
     "slide",
@@ -25,8 +27,14 @@
   "license": "NIT",
   "dependencies": {
     "@abandonware/noble": "git+https://github.com/abandonware/noble.git",
+    "@homebridge/plugin-ui-utils": "0.0.18",
     "debug": "^4.2.0",
     "poll": "^1.0.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.9.2",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
   },
   "prettier": {
     "semi": false
