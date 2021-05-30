@@ -39,10 +39,12 @@ class AM43UiServer extends HomebridgePluginUiServer {
   }
 
   deviceToObject(device) {
-    const { address, advertisement } = device
+    let { address, advertisement } = device
     const { localName, rssi } = advertisement
     const id = this._discoveredDevices.indexOf(device)
-    return { address, rssi, localName, id }
+    const isOnMac = process.platform === "darwin"
+    if (isOnMac) address = address || device.id
+    return { address, rssi, localName, id, isOnMac }
   }
 
   async handleScanRequest({ scan_time }) {

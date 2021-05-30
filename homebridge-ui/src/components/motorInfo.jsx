@@ -9,23 +9,24 @@ const LIMIT_MODES = {
 }
 
 const MotorInfo = ({ deviceId }) => {
-
   const [device, setDevice] = useState(null)
   const [newName, setNewName] = useState(null)
   const [passcode, setPasscode] = useState("8888")
   const [hasAuthed, setHasAuthed] = useState(false)
-  const { config, updateConfig, saveConfig } = useHomebridgeConfig()
+  const { config, updateConfig } = useHomebridgeConfig()
 
   const [limitUI, setLimitUI] = useState(null)
 
-  const isInAllowedDevices = (device && config) && (config[0].allowed_devices.includes(device.address))
+  const allowedDevices = config?.[0]?.allowed_devices || []
+
+  const isInAllowedDevices = allowedDevices.includes(device?.address)
 
   const removeFromAllowedDevices = async () => {
-    await updateConfig([{ ...config[0], allowed_devices: config[0].allowed_devices.filter((address) => address !== device.address) }])
+    await updateConfig([{ ...config[0], allowed_devices: allowedDevices.filter((address) => address !== device.address) }])
   }
 
   const addToAllowedDevices = async () => {
-    await updateConfig([{ ...config[0], allowed_devices: [...config[0].allowed_devices, device.address] }])
+    await updateConfig([{ ...config[0], allowed_devices: [...allowedDevices, device.address] }])
   }
 
   useEffect(() => {
@@ -33,7 +34,6 @@ const MotorInfo = ({ deviceId }) => {
     homebridge.request('/connect_to_device', { device_id: deviceId }).then(
       (deviceResult) => {
         homebridge.hideSpinner()
-        console.log(deviceResult)
         setNewName(deviceResult.localName)
         setDevice(deviceResult)
       }
