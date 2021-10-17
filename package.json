@@ -24,7 +24,7 @@
   "author": "Rens Verhoeven",
   "license": "NIT",
   "dependencies": {
-    "@abandonware/noble": "git+https://github.com/abandonware/noble.git",
+    "@abandonware/noble": "^1.9.2-14",
     "debug": "^4.2.0",
     "poll": "^1.0.1"
   },
