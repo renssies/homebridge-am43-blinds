@@ -1,4 +1,6 @@
-#### This plugin is considered a work in progress, it works, but it has some stability issues. See "Known Issues" and "Troubleshooting" below.
+**This plugin has been deprecated, for more info and alternatives see https://github.com/renssies/homebridge-am43-blinds/issues/41#issuecomment-1186548675**
+
+----
 
 # Homebridge AM43 Blinds
 
